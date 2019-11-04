@@ -1,12 +1,20 @@
-import React from 'react';
-import './App.css';
+import React from "react";
 import { Route } from "react-router-dom";
-import Login from './components/Login'
+import Nav from "./components/Nav";
+import SignIn from "./components/Login";
+import FriendsList from "./components/FriendsList";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Logout from "./components/Logout";
+
+import "./App.css";
 
 function App() {
   return (
     <div className="App">
-      <Route exact path='/' component={Login} />
+      <Nav />
+      <Route exact path="/signin" component={SignIn} />
+      <ProtectedRoute exact path="/friends" component={FriendsList} />
+      <Route exact path="/logout" component={Logout} />
     </div>
   );
 }

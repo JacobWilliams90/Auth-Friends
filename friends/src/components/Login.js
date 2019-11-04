@@ -1,41 +1,59 @@
-import React, { useState } from 'react'
+import React, { useState } from "react";
+import api from "../helper/api";
 
-export default function Login() {
-    const [token, setToken] = useState([])
+function Login(props) {
+  const [error, setError] = useState();
+  const [data, setData] = useState({
+    username: "",
+    password: ""
+  });
 
+  const handleChange = e => {
+    setData({
+      ...data,
+      [e.target.name]: e.target.value
+    });
+  };
 
-    const changeHandler = (event) => {
-        setToken({...token, [event.target.name]: event.target.value})
-    }
+  const handleSubmit = e => {
+    e.preventDefault();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        setToken(token);
+    api()
+      .post("/login", data)
+      .then(res => {
+        localStorage.setItem("token", res.data.payload);
+        props.history.push("/friends");
+      })
+      .catch(err => {
+        setError(err.response.data.message);
+      });
+  };
 
-        setToken({username: "", password: ""})
-    }
-
-    return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <input
-                    className="name"
-                    placeholder="Username"
-                    type="text"
-                    value={token.username}
-                    name="name"
-                    onChange={changeHandler}
-                />
-                <input
-                    className="password"
-                    placeholder="Password"
-                    type="password"
-                    value={token.password}
-                    name="age"
-                    onChange={changeHandler}
-                />
-                <button type="submit" className="SubmitButton">Login</button>
-            </form>
-        </div>
-    )
+  return (
+    <div className="sign-in">
+      <h2> Sign In </h2>
+      <form onSubmit={handleSubmit}>
+        {error && <div className="error">{error}</div>}
+        <input
+          type="username"
+          name="username"
+          placeholder="username"
+          value={data.username}
+          onChange={handleChange}
+        />{" "}
+        <br />
+        <input
+          type="password"
+          name="password"
+          placeholder="password"
+          value={data.password}
+          onChange={handleChange}
+        />
+        <br />
+        <button type="submit"> Sign In </button>
+      </form>
+    </div>
+  );
 }
+
+export default Login;
